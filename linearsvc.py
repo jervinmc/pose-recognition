@@ -31,6 +31,3 @@ print(f"Accuracy: {accuracy:.2f}")
 print(f"Precision: {precision:.2f}")
 print(f"Recall: {recall:.2f}")
 print(f"F1 score: {f1:.2f}")
-
-# Step 8: Predicting New Postures
-# TODO: Use the trained SVM model to predict new postures
