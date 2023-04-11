@@ -34,35 +34,27 @@ class MotionRecognitionGUI:
     def update_video(self):
         ret, frame = self.cap.read()
         if ret:
-            # Flip the frame horizontally for more intuitive video display
             frame = cv2.flip(frame, 1)
 
-            # Perform pose recognition on the frame using Mediapipe
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = self.pose.process(frame)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-            # Draw pose landmarks on the frame
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-            # Check for clapping
             left_hand = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HAND]
             right_hand = results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HAND]
             if left_hand and right_hand:
                 if left_hand.y < right_hand.y and abs(left_hand.x - right_hand.x) < 0.2:
-                    # Hands are clapping
                     self.is_clapping = True
                 else:
                     self.is_clapping = False
 
-            # Check for sleeping
             if results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y < results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_EYE_INNER].y and results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE].y < results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_EYE_INNER].y:
-                # Person is sleeping
                 self.is_sleeping = True
             else:
                 self.is_sleeping = False
 
-            # Update GUI label for action recognition
             if self.is_sleeping:
                 self.label_action.config(text="Action: Sleeping")
             elif self.is_clapping:
@@ -70,15 +62,13 @@ class MotionRecognitionGUI:
             else:
                 self.label_action.config(text="Action: Idle")
 
-            # Update GUI canvas with new frame
             img = cv2.resize(frame, (640, 480))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(img)
             img_tk = ImageTk.PhotoImage(img)
-            self.canvas.img_tk = img_tk  # To prevent garbage collection
+            self.canvas.img_tk = img_tk 
             self.canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
 
-        # Schedule the next update
         self.root.after(10, self.update_video)
 
 if __name__ == "__main__":

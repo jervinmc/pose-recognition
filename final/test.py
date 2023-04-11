@@ -2,39 +2,25 @@ import cv2
 import speech_recognition as sr
 import threading
 
-# Initialize speech recognition module
 r = sr.Recognizer()
 
-# Open video stream
 cap = cv2.VideoCapture(0)
 
-# Create a lock to synchronize access to the shared video frame
 frame_lock = threading.Lock()
 
-# Define a worker function that captures video frames
 def capture_frames():
     global frame_lock
 
     while True:
-        # Read frame from video stream
         ret, frame = cap.read()
-
-        # Acquire lock to prevent other threads from accessing the shared frame
         with frame_lock:
-            # Do something with the video frame
-            # ...
-
-            # Display frame
             cv2.imshow("Video Stream", frame)
 
-        # Exit program on 'q' key press
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-# Define a worker function that performs speech recognition
 def recognize_speech():
     while True:
-        # Perform speech recognition on audio from microphone
         with sr.Microphone() as source:
             audio = r.listen(source)
             try:
