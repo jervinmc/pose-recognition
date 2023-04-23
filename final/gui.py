@@ -2,8 +2,10 @@ import tkinter as tk
 import cv2
 import mediapipe as mp
 import threading
+from PIL import Image, ImageTk
 import speech_recognition as sr
 # import webview
+window=tk
 
 r = sr.Recognizer()
 mic = sr.Microphone()
@@ -12,6 +14,32 @@ mp_pose = mp.solutions.pose
 detected = ''
 category = ''
 speech = ''
+
+def display_images():
+    # Create the main window
+    # root = tk.Tk()
+    activity_window1 = tk.Toplevel()
+    activity_window1.title("Tutorial")
+    root.title("Image Viewer")
+    
+    # Load the images
+    
+    # Convert the images to Tkinter-compatible format
+    label1 = tk.PhotoImage(file='lunges.gif')
+    label2 = tk.PhotoImage(file='lunges.gif')
+    label3 = tk.PhotoImage(file='lunges.gif')
+    label4 = tk.PhotoImage(file='lunges.gif')
+    label1 = tk.Label(activity_window1, image=label1)
+    label2 = tk.Label(activity_window1, image=label2)
+    label3 = tk.Label(activity_window1, image=label3)
+    label4 = tk.Label(activity_window1, image=label4)
+
+    
+    # Add the labels to the window
+    # label1.pack(side=tk.LEFT)
+    # label2.pack(side=tk.LEFT)
+    # label3.pack(side=tk.LEFT)
+    # label4.pack(side=tk.LEFT)
 
 def create_activity_gui():
     # create a new Tkinter window
@@ -197,8 +225,14 @@ root = tk.Tk()
 root.title("Program Selector")
 root.geometry("400x400") 
 root.configure(bg="#0D6E9B") 
+
+# label = tk.Label(root, image=image)
+
 label = tk.Label(root, text="Choose a program to start:", fg="#FFFFFF", bg="#0D6E9B", font=("Arial", 24, "bold"))
 label.pack(pady=20)
+detection_button = tk.Button(root, text="Tutorial", command=display_images, fg="#FFFFFF", bg="#000000", font=("Arial", 18, "bold"), padx=30, pady=15)
+detection_button.pack(pady=20)
+
 detection_button = tk.Button(root, text="Activity", command=create_activity_gui, fg="#FFFFFF", bg="#000000", font=("Arial", 18, "bold"), padx=30, pady=15)
 detection_button.pack(pady=20)
 
