@@ -10,10 +10,23 @@ window=tk
 r = sr.Recognizer()
 mic = sr.Microphone()
 mp_pose = mp.solutions.pose
+import time
 
 detected = ''
 category = ''
 speech = ''
+getInFive = False
+image = ''
+
+def timer(seconds):
+    global image
+    global getInFive
+    time.sleep(seconds)
+    print("Time's up!")
+    if(not getInFive):
+        print('You lose!')
+        cv2.putText(image, 'You lose!!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
 
 def display_images():
     # Create the main window
@@ -103,9 +116,13 @@ def worker(num):
 def start_detection():
     global detected
     global speech
+    global image
     score = 0
     t = threading.Thread(target=worker, args=('',))
     t.start()
+    t = threading.Thread(target=timer, args=(5,))
+    t.start()
+    print("Timer started...")
     mp_pose = mp.solutions.pose
     standing_still_keypoints = [mp.solutions.pose.PoseLandmark.LEFT_SHOULDER, mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER,mp.solutions.pose.PoseLandmark.LEFT_HIP, mp.solutions.pose.PoseLandmark.RIGHT_HIP,mp.solutions.pose.PoseLandmark.LEFT_KNEE, mp.solutions.pose.PoseLandmark.RIGHT_KNEE,mp.solutions.pose.PoseLandmark.LEFT_ANKLE, mp.solutions.pose.PoseLandmark.RIGHT_ANKLE]
     clapping_keypoints = [mp.solutions.pose.PoseLandmark.LEFT_WRIST, mp.solutions.pose.PoseLandmark.RIGHT_WRIST]
@@ -185,9 +202,12 @@ def start_detection():
                     cv2.putText(image, 'Sleeping', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 elif is_shaking_head:
                     detected = 'shaking head'
+                    
                     cv2.putText(image, 'Shaking Head', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 if(speech == category and detected == category):
                         score = score + 1
+                        getInFive = True
+                        cv2.putText(image, 'Congratulations!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 cv2.putText(image, f'You say : {speech}', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 cv2.putText(image, f'Score : {score}', (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.imshow('Pose Detection', image)
