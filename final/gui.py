@@ -17,16 +17,26 @@ category = ''
 speech = ''
 getInFive = False
 image = ''
+isGotTheAnswer = False
+lose = False
+isGotTheAnswer1 = False
+
+def closing(t):
+    global cap
+    time.sleep(t)
+    print("closed!")
+    # cap.release()
+    cv2.destroyAllWindows()
 
 def timer(seconds):
     global image
+    global lose
     global getInFive
     time.sleep(seconds)
-    print("Time's up!")
     if(not getInFive):
-        print('You lose!')
-        cv2.putText(image, 'You lose!!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
+        lose = True
+        t = threading.Thread(target=closing, args=(10,))
+        t.start()
 
 def display_images():
     # Create the main window
@@ -115,12 +125,14 @@ def worker(num):
 
 def start_detection():
     global detected
+    global isGotTheAnswer
     global speech
     global image
+    global isGotTheAnswer1
     score = 0
     t = threading.Thread(target=worker, args=('',))
     t.start()
-    t = threading.Thread(target=timer, args=(5,))
+    t = threading.Thread(target=timer, args=(20,))
     t.start()
     print("Timer started...")
     mp_pose = mp.solutions.pose
@@ -204,11 +216,34 @@ def start_detection():
                     detected = 'shaking head'
                     
                     cv2.putText(image, 'Shaking Head', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                if(speech == category and detected == category):
-                        score = score + 1
-                        getInFive = True
-                        cv2.putText(image, 'Congratulations!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                cv2.putText(image, f'You say : {speech}', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                if(speech == category and not isGotTheAnswer):
+                    isGotTheAnswer = True
+                    score = score + 1
+                    getInFive = True
+                    
+
+                if(detected == category and not isGotTheAnswer1):
+                    isGotTheAnswer1 = True
+                    score = score + 1
+                    
+                    getInFive = True
+
+                if(score==2):
+                    # score = score + 1
+                    cv2.putText(image, 'Congratulations!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.putText(image, 'Will close in 10secs...', (50, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    t = threading.Thread(target=closing, args=(10,))
+                    t.start()
+                
+                if(lose):
+                    cv2.putText(image, 'You Lose!', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.putText(image, 'Will close in 10secs...', (50, 300), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    t = threading.Thread(target=closing, args=(10,))
+                
+                    # time.sleep(10)
+                    # break
+
+                cv2.putText(image, f'You said : {speech}', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 cv2.putText(image, f'Score : {score}', (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.imshow('Pose Detection', image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
