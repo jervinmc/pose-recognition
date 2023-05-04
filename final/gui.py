@@ -169,14 +169,14 @@ def start_detection():
                 for landmark in results.pose_landmarks.landmark:
                     keypoints.append(landmark)
 
-                for i, landmark in enumerate(keypoints):
-                    x, y, z = landmark.x, landmark.y, landmark.z
-                    x, y = int(x * image.shape[1]), int(y * image.shape[0])
-                    cv2.circle(image, (x, y), 3, (0, 255, 0), -1)
-                for connection in mp_pose.POSE_CONNECTIONS:
-                    x0, y0 = int(keypoints[connection[0]].x * image.shape[1]), int(keypoints[connection[0]].y * image.shape[0])
-                    x1, y1 = int(keypoints[connection[1]].x * image.shape[1]), int(keypoints[connection[1]].y * image.shape[0])
-                    cv2.line(image, (x0, y0), (x1, y1), (0, 255, 0), 2)
+                # for i, landmark in enumerate(keypoints):
+                #     x, y, z = landmark.x, landmark.y, landmark.z
+                #     x, y = int(x * image.shape[1]), int(y * image.shape[0])
+                #     cv2.circle(image, (x, y), 3, (0, 255, 0), -1)
+                # for connection in mp_pose.POSE_CONNECTIONS:
+                #     x0, y0 = int(keypoints[connection[0]].x * image.shape[1]), int(keypoints[connection[0]].y * image.shape[0])
+                #     x1, y1 = int(keypoints[connection[1]].x * image.shape[1]), int(keypoints[connection[1]].y * image.shape[0])
+                #     cv2.line(image, (x0, y0), (x1, y1), (0, 255, 0), 2)
 
                 is_clapping = all([keypoints[k].visibility > 0.5 for k in clapping_keypoints])
                 is_hi = all([keypoints[k].visibility > 0.5 for k in hi_keypoints])
