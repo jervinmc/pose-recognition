@@ -4,8 +4,13 @@ import mediapipe as mp
 import threading
 from PIL import Image, ImageTk
 import speech_recognition as sr
+import webbrowser
+
 # import webview
 window=tk
+def open_url(urls):
+    url = urls
+    webbrowser.open_new(url)
 
 r = sr.Recognizer()
 mic = sr.Microphone()
@@ -26,7 +31,7 @@ def closing(t):
     time.sleep(t)
     print("closed!")
     # cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
 def timer(seconds):
     global image
@@ -82,6 +87,35 @@ def create_activity_gui():
     stretching_button = tk.Button(activity_window, text="Stretching")
     raising_button = tk.Button(activity_window,command=lambda : choose_category('raising arms'), text="Raising Arms")
     pointing_button = tk.Button(activity_window,command=lambda : choose_category('pointing'), text="Pointing")
+
+    # add the buttons to the window
+    standing_button.pack()
+    clapping_button.pack()
+    sleeping_button.pack()
+    stretching_button.pack()
+    raising_button.pack()
+    pointing_button.pack()
+
+
+
+def create_tutorial_gui():
+    # create a new Tkinter window
+    activity_window = tk.Toplevel()
+
+    # set the window title
+    activity_window.title("Choose an Activity")
+
+    # create a label to describe the available activities
+    activity_label = tk.Label(activity_window, text="Please select an activity:")
+    activity_label.pack()
+
+    # create buttons for each activity
+    standing_button = tk.Button(activity_window,command=lambda : open_url('https://www.youtube.com/shorts/O7xC20X9ctg') ,text="Standing Still")
+    clapping_button = tk.Button(activity_window,command=lambda : open_url('https://www.youtube.com/shorts/S7HIjmzW3GQ'), text="Clapping")
+    sleeping_button = tk.Button(activity_window,command=lambda : open_url('sleeping'), text="Sleeping")
+    stretching_button = tk.Button(activity_window, text="Stretching")
+    raising_button = tk.Button(activity_window,command=lambda : open_url('raising arms'), text="Raising Arms")
+    pointing_button = tk.Button(activity_window,command=lambda : open_url('pointing'), text="Pointing")
 
     # add the buttons to the window
     standing_button.pack()
@@ -274,7 +308,8 @@ def start_video_capture():
     cv2.destroyAllWindows()
 
 def quit_program():
-    root.destroy()
+    # root.destroy()
+    print()
 
 root = tk.Tk()
 root.title("Program Selector")
@@ -285,7 +320,7 @@ root.configure(bg="#0D6E9B")
 
 label = tk.Label(root, text="Choose a program to start:", fg="#FFFFFF", bg="#0D6E9B", font=("Arial", 24, "bold"))
 label.pack(pady=20)
-detection_button = tk.Button(root, text="Tutorial", command=display_images, fg="#FFFFFF", bg="#000000", font=("Arial", 18, "bold"), padx=30, pady=15)
+detection_button = tk.Button(root, text="Tutorial", command=create_tutorial_gui, fg="#FFFFFF", bg="#000000", font=("Arial", 18, "bold"), padx=30, pady=15)
 detection_button.pack(pady=20)
 
 detection_button = tk.Button(root, text="Activity", command=create_activity_gui, fg="#FFFFFF", bg="#000000", font=("Arial", 18, "bold"), padx=30, pady=15)
